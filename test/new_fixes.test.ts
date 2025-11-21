@@ -1,9 +1,9 @@
 import { describe, it, expect } from "bun:test";
 import * as jose from "jose";
-import { SDPacker } from "../src/issuer";
-import { SDJwt } from "../src/sdJwt";
-import { Verifier } from "../src/verifier";
-import { digest } from "../src/common";
+import { SDPacker } from "../core/src/issuer";
+import { SDJwt } from "../core/src/sdJwt";
+import { Verifier } from "../core/src/verifier";
+import { digest } from "../core/src/common";
 
 describe("Regression fixes", () => {
   it("resets disclosures on each top-level pack call", async () => {

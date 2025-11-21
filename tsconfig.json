@@ -12,9 +12,9 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "types": ["bun-types"],
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "public/**/*", "test/**/*", "fhir/**/*"]
+  "include": ["core/src/**/*", "public/**/*", "test/**/*", "fhir/**/*"]
 }

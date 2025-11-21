@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll } from "bun:test";
 import * as jose from "jose";
-import { base64UrlEncode, base64UrlDecode } from "../src/common";
-import { SDPacker } from "../src/issuer";
-import { SDJwt } from "../src/sdJwt";
-import { Verifier } from "../src/verifier";
+import { base64UrlEncode, base64UrlDecode } from "../core/src/common";
+import { SDPacker } from "../core/src/issuer";
+import { SDJwt } from "../core/src/sdJwt";
+import { Verifier } from "../core/src/verifier";
 
 describe("Browser compatibility and UTF-8 safety", () => {
   let pubKey: jose.KeyLike;

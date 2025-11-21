@@ -1,8 +1,8 @@
 import { describe, it, expect } from "bun:test";
 import * as jose from "jose";
-import { SDPacker } from "../src/issuer";
-import { SDJwt } from "../src/sdJwt";
-import { Verifier } from "../src/verifier";
+import { SDPacker } from "../core/src/issuer";
+import { SDJwt } from "../core/src/sdJwt";
+import { Verifier } from "../core/src/verifier";
 
 describe("Spec gap regressions", () => {
   it("supports recursive disclosures inside concealed array elements", async () => {

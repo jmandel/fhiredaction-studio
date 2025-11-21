@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll } from "bun:test";
 import * as jose from 'jose';
-import { SDPacker } from '../src/issuer';
-import { SDJwt, ARRAY_ELEMENT_KEY, SD_KEY } from '../src/sdJwt';
-import { Verifier } from '../src/verifier';
-import { Disclosure } from '../src/disclosure';
-import { digest, base64UrlEncode } from '../src/common';
+import { SDPacker } from '../core/src/issuer';
+import { SDJwt, ARRAY_ELEMENT_KEY, SD_KEY } from '../core/src/sdJwt';
+import { Verifier } from '../core/src/verifier';
+import { Disclosure } from '../core/src/disclosure';
+import { digest, base64UrlEncode } from '../core/src/common';
 
 describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
     let keyPair: any;

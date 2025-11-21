@@ -3,4 +3,3 @@ export * from './disclosure';
 export * from './sdJwt';
 export * from './issuer';
 export * from './verifier';
-export * from '../fhir/src/autoSdJwt';

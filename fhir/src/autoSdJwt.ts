@@ -1,7 +1,7 @@
-import { SDJwt } from "../../src/sdJwt";
-import { SDPacker } from "../../src/issuer";
+import { SDJwt } from "../../core/src/sdJwt";
+import { SDPacker } from "../../core/src/issuer";
 import { SignJWT } from "jose";
-import { Verifier } from "../../src/verifier";
+import { Verifier } from "../../core/src/verifier";
 import fhirIndex from "../defs/fhir-r4-index.json" with { type: "json" };
 
 type IndexElement = {

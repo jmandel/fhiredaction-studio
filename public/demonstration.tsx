@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { SDJwt, SD_KEY, ARRAY_ELEMENT_KEY, DIGEST_ALG_KEY } from '../src/sdJwt';
-import { verifyFhirSdJwt } from '../fhir/src/autoSdJwt';
-import { Disclosure } from '../src/disclosure';
-import { normalizeHashAlgorithm } from '../src/common';
-import { packFhirSdJwt } from '../fhir/src/autoSdJwt';
+import { SDJwt, SD_KEY, ARRAY_ELEMENT_KEY, DIGEST_ALG_KEY } from '../core/src/sdJwt';
+import { verifyFhirSdJwt, packFhirSdJwt } from '../fhir/src/autoSdJwt';
+import { Disclosure } from '../core/src/disclosure';
+import { normalizeHashAlgorithm } from '../core/src/common';
 import * as jose from 'jose';
 
 // Static demo artifacts (bundled at build time / served statically)

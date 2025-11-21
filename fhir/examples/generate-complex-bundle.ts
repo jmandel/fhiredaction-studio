@@ -1,4 +1,4 @@
-import { SDJwt } from '../../src/index';
+import { SDJwt } from '../../core/src/index';
 import * as jose from 'jose';
 import { writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';

@@ -1,8 +1,8 @@
 {
   "name": "sd-jwt-bun",
   "version": "1.0.0",
-  "description": "Selective Disclosure JWT implementation in Bun/TypeScript",
-  "main": "src/index.ts",
+  "description": "Selective Disclosure JWT implementation in Bun/TypeScript (generic core in ./core plus FHIR helpers/demo).",
+  "main": "core/src/index.ts",
   "type": "module",
   "scripts": {
     "test": "bun test",

@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll } from "bun:test";
 import * as jose from "jose";
-import { SDPacker } from "../src/issuer";
-import { SDJwt } from "../src/sdJwt";
-import { Verifier } from "../src/verifier";
+import { SDPacker } from "../core/src/issuer";
+import { SDJwt } from "../core/src/sdJwt";
+import { Verifier } from "../core/src/verifier";
 
 // Regression coverage for scenarios that previously slipped through the implementation.
 describe("Spec gaps – regression coverage", () => {

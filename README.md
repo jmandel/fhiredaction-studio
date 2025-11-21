@@ -1,6 +1,9 @@
 # sd-jwt-bun
 
-Selective Disclosure JWT (SD-JWT) toolkit for Bun/TypeScript. Implements RFC 9901 concepts with a practical API for issuers, holders, and verifiers, plus optional FHIR helpers.
+Selective Disclosure JWT (SD-JWT) toolkit for Bun/TypeScript. Implements RFC 9901 concepts with a practical API for issuers, holders, and verifiers, plus optional FHIR helpers. The repo hosts:
+- `core/` — the generic SD-JWT implementation.
+- `fhir/` — FHIR-specific helpers and examples built on the core.
+- `public/` — the holder-facing demo UI that showcases SD-JWTs in a FHIR context.
 
 ## Installation
 
@@ -117,6 +120,59 @@ const claims = await verifier.verify(sdJwt, issuerPubKey, {
 ### FHIR helpers
 
 `packFhirSdJwt(payload, signingKey, opts?)` builds a config from a generated FHIR index and packs/signs a resource. `verifyFhirSdJwt(sdJwtString, pubKey)` verifies it. See `fhir/src/autoSdJwt.ts`.
+
+### Demo UI (how it works, with inline examples)
+
+What an SD‑JWT is (in brief):
+- The issuer’s JWS payload contains “holes” that are hashes of disclosures.
+- A disclosure is a base64url-encoded JSON array: for objects `[salt, key, value]`; for arrays `[salt, value]`.
+- Arrays use `{ "...": "<digest>" }` placeholders; objects list disclosure digests in `_sd`.
+- Example object disclosure array:
+  ```json
+  ["abc123salt", "telecom", [{"system":"phone","value":"555-1234"}]]
+  ```
+  A matching digest is placed in the issuer payload `_sd`.
+- Example array after packing:
+  ```json
+  "telecom": [
+    { "...": "digest-for-index-0" },
+    { "...": "digest-for-index-1" }
+  ]
+  ```
+
+What the demo loads:
+- Static SD-JWT (`public/data/sdjwt.txt`), issuer public JWK, and `disclosures.json`.
+- `_sd_alg` is decoded from the JWS; every disclosure is re-hashed with that algorithm.
+
+Reconstruction (holder view):
+- Traverse the issuer payload plus disclosures to build:
+  - `fullPayload`: fully disclosed JSON (root `_sd/_sd_alg` removed).
+  - `pathMap`: every cutpoint path (e.g., `entry.0.resource.name.1`) → its disclosure digest.
+- Traversal rules:
+  - Objects: copy plain props; for `_sd` entries that match disclosures, record `path → digest` and recurse into the disclosure value.
+  - Arrays: if an element is `{ "...": "<digest>" }` and we have that disclosure, record `path → digest` and recurse into its value.
+
+Rendering and interaction:
+- Every value/container is wrapped in a dashed box with `data-path`.
+- A box is clickable (pointer cursor) if it is a cutpoint or has descendant cutpoints (`pathMap` prefix match).
+- Clicking a box with its own digest toggles that digest; clicking a non-cutpoint toggles all descendant digests.
+- Drag/select text: on mouseup, the nearest ancestor whose `data-path` is in `pathMap` is marked redacted.
+- Redactions are tracked in a `Set` of digests; redacted boxes show strike-through.
+
+Inline examples:
+- Patient.name array:
+  - Issuer payload: `name: [ {"...": "<d0>"}, {"...": "<d1>"} ]`.
+  - `pathMap` has `entry.0.resource.name.0 -> d0`, `entry.0.resource.name.1 -> d1`.
+  - Clicking the first name box toggles only `d0`; the second remains.
+- Condition.code:
+  - Digest for code lives in `_sd`; `pathMap` has `entry.1.resource.code -> dCode`.
+  - Clicking `code` toggles just that digest, not the whole Condition.
+
+Disclose action:
+- Filter out any disclosure whose digest is redacted.
+- Rebuild the SD-JWT string (issuer JWS + retained disclosures).
+- Verify once with the FHIR-aware verifier (`verifyFhirSdJwt`), which validates and strips empty arrays for clean FHIR output.
+- The demo shows the presentation string, raw JWT payload + encoded disclosures, and the cleaned/verified FHIR JSON.
 
 ## Testing
 

@@ -10,8 +10,8 @@ import { readFile } from "fs/promises";
 import path from "path";
 import * as jose from "jose";
 import { packFhirSdJwt } from "../src/autoSdJwt";
-import { SDJwt } from "../../src/sdJwt";
-import { Verifier } from "../../src/verifier";
+import { SDJwt } from "../../core/src/sdJwt";
+import { Verifier } from "../../core/src/verifier";
 
 async function main() {
   const fixturePath = path.resolve(

@@ -1,10 +1,10 @@
 import { describe, it, expect } from "bun:test";
 import * as jose from "jose";
-import { normalizeHashAlgorithm } from "../src/common";
-import { Disclosure } from "../src/disclosure";
-import { SDPacker } from "../src/issuer";
-import { SDJwt } from "../src/sdJwt";
-import { Verifier } from "../src/verifier";
+import { normalizeHashAlgorithm } from "../core/src/common";
+import { Disclosure } from "../core/src/disclosure";
+import { SDPacker } from "../core/src/issuer";
+import { SDJwt } from "../core/src/sdJwt";
+import { Verifier } from "../core/src/verifier";
 
 describe("Reference implementation regressions", () => {
   it("fails to parse disclosures with invalid base64", async () => {

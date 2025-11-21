@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll } from "bun:test";
 import * as jose from "jose";
 import { packFhirSdJwt } from "../src/autoSdJwt";
-import { Verifier } from "../../src/verifier";
-import { SDJwt } from "../../src/sdJwt";
+import { Verifier } from "../../core/src/verifier";
+import { SDJwt } from "../../core/src/sdJwt";
 
 describe("FHIR auto SD-JWT", () => {
   let privKey: jose.KeyLike;

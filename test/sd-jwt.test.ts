@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll } from "bun:test";
 import * as jose from 'jose';
-import { SDPacker } from '../src/issuer';
-import { SDJwt } from '../src/sdJwt';
-import { Verifier } from '../src/verifier';
-import { Disclosure } from '../src/disclosure';
+import { SDPacker } from '../core/src/issuer';
+import { SDJwt } from '../core/src/sdJwt';
+import { Verifier } from '../core/src/verifier';
+import { Disclosure } from '../core/src/disclosure';
 
 describe("SD-JWT", () => {
     let keyPair: any;

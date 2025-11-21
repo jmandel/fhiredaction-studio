@@ -17,9 +17,9 @@
 import { readFile } from "fs/promises";
 import path from "path";
 import * as jose from "jose";
-import { SDJwt } from "../../src/sdJwt";
-import { Disclosure } from "../../src/disclosure";
-import { Verifier } from "../../src/verifier";
+import { SDJwt } from "../../core/src/sdJwt";
+import { Disclosure } from "../../core/src/disclosure";
+import { Verifier } from "../../core/src/verifier";
 
 const OUT_DIR = path.resolve(process.cwd(), "fhir", "out");
 

@@ -1,4 +1,4 @@
-import { base64UrlEncode, base64UrlDecodeToString, digest, generateSalt } from './common';
+import { base64UrlEncode, base64UrlDecodeToString, digest, generateSalt, normalizeHashAlgorithm } from './common';
 
 export type DisclosureArray = [string, string, any] | [string, any];
 
@@ -47,6 +47,9 @@ export class Disclosure {
                 if (typeof key !== 'string') {
                      throw new Error("Disclosure key must be a string");
                 }
+                if (key === '_sd' || key === '...') {
+                    throw new Error("Disclosure key uses reserved name");
+                }
             } else if (array.length === 2) {
                 [salt, value] = array;
             } else {
@@ -58,10 +61,6 @@ export class Disclosure {
             }
 
             const disclosure = new Disclosure(salt, value, key);
-            // Verify that the re-encoded disclosure matches the input
-            // Actually, the spec says "The digest is calculated over the respective base64url-encoded value itself, which effectively signs the variation chosen by the Issuer"
-            // So we should keep the original encoded string if possible, OR we accept that we might re-encode it differently if we don't store it.
-            // But here we are parsing, so we should store the original encoded string.
             disclosure.encoded = encoded;
             await disclosure.calculateDigest();
             return disclosure;
@@ -71,6 +70,8 @@ export class Disclosure {
     }
 
     async calculateDigest(alg: string = 'SHA-256') {
-        this.digestValue = await digest(this.encoded, alg);
+        const normalizedAlg = normalizeHashAlgorithm(alg);
+        this.digestValue = await digest(this.encoded, normalizedAlg);
     }
+
 }

@@ -1,8 +1,8 @@
-import { readFile } from "fs/promises";
 import { SDJwt } from "../../src/sdJwt";
 import { SDPacker } from "../../src/issuer";
 import { SignJWT } from "jose";
 import { Verifier } from "../../src/verifier";
+import fhirIndex from "../defs/fhir-r4-index.json" with { type: "json" };
 
 type IndexElement = {
   path: string;
@@ -26,14 +26,9 @@ type Index = {
   structures: Record<string, IndexSD>;
 };
 
-let cachedIndex: Promise<Index> | null = null;
+const cachedIndex: Promise<Index> = Promise.resolve(fhirIndex as Index);
 
 async function loadIndex(): Promise<Index> {
-  if (!cachedIndex) {
-    // autoSdJwt lives in fhir/src; defs are in fhir/defs
-    const idxUrl = new URL("../defs/fhir-r4-index.json", import.meta.url);
-    cachedIndex = readFile(idxUrl, "utf8").then((txt) => JSON.parse(txt));
-  }
   return cachedIndex;
 }
 
@@ -161,11 +156,39 @@ export async function packFhirSdJwt(
   return { sdJwt, jwt, disclosures, packedPayload };
 }
 
+/**
+ * Helper to recursively remove empty arrays from an object
+ */
+function stripEmptyArrays(obj: any): any {
+  if (Array.isArray(obj)) {
+    const newArr = obj.map(stripEmptyArrays).filter(item => item !== undefined);
+    return newArr.length > 0 ? newArr : undefined;
+  }
+  if (typeof obj === 'object' && obj !== null) {
+    const newObj: any = {};
+    for (const [key, val] of Object.entries(obj)) {
+      const cleanVal = stripEmptyArrays(val);
+      if (cleanVal !== undefined) {
+        newObj[key] = cleanVal;
+      }
+    }
+    return newObj;
+  }
+  return obj;
+}
+
+/**
+ * Verify an SD-JWT string and return the verified FHIR payload
+ * with empty arrays stripped.
+ */
 export async function verifyFhirSdJwt(
   sdJwtString: string,
-  pubKey: any,
-) {
-  const parsed = SDJwt.parse(sdJwtString);
+  publicKey: any,
+): Promise<any> {
+  const parsed = await SDJwt.parse(sdJwtString);
   const verifier = new Verifier();
-  return verifier.verify(parsed, pubKey);
+  const verified = await verifier.verify(parsed, publicKey);
+
+  // Strip empty arrays from the verified result
+  return stripEmptyArrays(verified);
 }

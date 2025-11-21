@@ -41,75 +41,38 @@ export class SDJwt {
         return await digest(sdJwtString, alg);
     }
 
-    static parse(input: string): SDJwt {
-        const parts = input.split('~');
-        if (parts.length < 1) {
-            throw new Error("Invalid SD-JWT format");
-        }
-
-        const jwt = parts[0];
-        const disclosures: Disclosure[] = [];
-        let kbJwt: string | undefined;
-
-        // Iterate through parts. 
-        // Format: <Issuer-signed JWT>~<Disclosure 1>~...~<Disclosure N>~<KB-JWT>
-        // If no KB-JWT, it ends with ~
-        
-        // So all intermediate parts are disclosures. The last part might be empty (if no KB-JWT) or KB-JWT.
-        
-        const potentialDisclosures = parts.slice(1, parts.length - 1);
-        const lastPart = parts[parts.length - 1];
-
-        // However, if there are disclosures, each must be valid.
-        // We will parse them asynchronously later or now? 
-        // Since parse is sync here (mostly), let's just store strings?
-        // But the class expects Disclosure objects.
-        // I'll make parse async.
-        
-        throw new Error("Use parseAsync instead");
+  static async parse(input: string): Promise<SDJwt> {
+    const parts = input.split('~');
+    if (parts.length < 2) {
+        throw new Error("Invalid SD-JWT format: missing separators");
     }
-    
-    static async parseAsync(input: string): Promise<SDJwt> {
-        const parts = input.split('~');
-        if (parts.length < 2) {
-             // It must have at least one ~ at the end
-             throw new Error("Invalid SD-JWT format: missing tilde separator");
-        }
 
-        const jwt = parts[0];
-        const disclosures: Disclosure[] = [];
-        let kbJwt: string | undefined;
+    const hasTrailingSeparator = input.endsWith('~');
+    const lastElement = parts[parts.length - 1];
+    const isKbJwt = lastElement !== "";
 
-        // The last element is KB-JWT or empty string
-        const lastElement = parts[parts.length - 1];
-        if (lastElement !== "") {
-            kbJwt = lastElement;
-        }
-
-        // Everything in between are disclosures
-        for (let i = 1; i < parts.length - 1; i++) {
-            const d = parts[i];
-            if (d.length > 0) {
-                disclosures.push(await Disclosure.parse(d));
-            }
-        }
-
-        return new SDJwt(jwt, disclosures, kbJwt);
+    if (!isKbJwt && !hasTrailingSeparator) {
+        throw new Error("Invalid SD-JWT format: missing trailing separator");
     }
+    if (isKbJwt && lastElement.split('.').length !== 3) {
+        throw new Error("Invalid SD-JWT format: final component must be a JWT when present");
+    }
+
+    const jwt = parts[0];
+    const disclosures: Disclosure[] = [];
+    let kbJwt: string | undefined = isKbJwt ? lastElement : undefined;
+
+    for (let i = 1; i < parts.length - 1; i++) {
+        const d = parts[i];
+        if (d.length > 0) {
+            disclosures.push(await Disclosure.parse(d));
+        }
+    }
+
+    return new SDJwt(jwt, disclosures, kbJwt);
+  }
 
     async getClaims(pubKey: jose.KeyLike | Uint8Array): Promise<any> {
-        // Verify the JWT signature
-        const { payload } = await jose.jwtVerify(this.jwt, pubKey);
-        
-        // Reconstruct the object
-        return this.reconstruct(payload as SDJwtPayload);
-    }
-    
-    // Simplified reconstruction that assumes all disclosures provided are to be used.
-    // In a real verifier, we verify digests.
-    private reconstruct(payload: any): any {
-         // This is a placeholder. The actual logic is complex and should be in Verifier.
-         // This class is mostly a container.
-         return payload;
+        throw new Error("SDJwt.getClaims is deprecated. Use Verifier.verify for secure processing.");
     }
 }

@@ -6,12 +6,17 @@
   "type": "module",
   "scripts": {
     "test": "bun test",
-    "build": "bun build ./public/demonstration.ts --outdir ./public"
+    "build": "bun build ./public/demonstration.tsx --outdir ./public",
+    "generate:fhir": "bun run fhir/scripts/generate-fhir-r4-index.ts"
   },
   "dependencies": {
-    "jose": "^5.2.3"
+    "jose": "^5.2.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
     "bun-types": "latest",
     "typescript": "^5.0.0"
   }

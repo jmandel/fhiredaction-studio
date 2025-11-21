@@ -4,15 +4,25 @@ import { SDJwt, SD_KEY, ARRAY_ELEMENT_KEY, DIGEST_ALG_KEY } from '../src/sdJwt';
 import { Verifier } from '../src/verifier';
 import { Disclosure } from '../src/disclosure';
 import { normalizeHashAlgorithm } from '../src/common';
+import { packFhirSdJwt } from '../fhir/src/autoSdJwt';
 import * as jose from 'jose';
 
 // Static demo artifacts (bundled at build time / served statically)
 import sdJwtTextRaw from './data/sdjwt.txt' with { type: 'text' };
 import issuerPublicJwk from './data/issuer_public.jwk.json' with { type: 'json' };
+import issuerPrivateJwk from './data/issuer_private.jwk.json' with { type: 'json' };
+import disclosureRows from './data/disclosures.json' with { type: 'json' };
+import markerCursorImg from './marker-cursor.png';
+
+type DisclosureFileRow = {
+    encoded: string;
+    digest?: string;
+    key?: string;
+};
 
 // --- Styles & Assets ---
 
-const markerCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M4 28 L28 4 L24 0 L0 24 Z" fill="black" stroke="white" stroke-width="1"/><circle cx="4" cy="28" r="2" fill="black"/></svg>') 0 32, auto`;
+const markerCursor = `url('${markerCursorImg}') 0 109, auto`;
 
 // --- Styles Update ---
 const styles = {
@@ -26,6 +36,10 @@ const styles = {
         overflow: 'hidden', // Prevent body scroll
     },
     header: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative' as const,
         textAlign: 'center' as const,
         padding: '20px',
         fontSize: '2.5em',
@@ -73,6 +87,18 @@ const styles = {
         boxShadow: '2px 2px 4px rgba(0,0,0,0.2)',
         transition: 'background 0.2s',
     },
+    gearButton: {
+        position: 'absolute' as const,
+        right: '16px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'none',
+        border: 'none',
+        fontSize: '1.4em',
+        cursor: 'pointer',
+        padding: '6px',
+        lineHeight: 1,
+    },
     sectionHeader: {
         display: 'flex',
         alignItems: 'center',
@@ -96,11 +122,12 @@ const styles = {
         fontSize: '0.9em',
         lineHeight: '1.2',
         userSelect: 'none' as const,
+        cursor: markerCursor,
     },
     // ... keep other styles (key, value, bracket, cutPoint, etc.)
-    key: { color: '#e67e22', fontWeight: 'bold' as const },
-    value: { color: '#2980b9' },
-    bracket: { color: '#7f8c8d', fontWeight: 'bold' as const },
+    key: { color: '#e67e22', fontWeight: 'bold' as const, cursor: markerCursor },
+    value: { color: '#2980b9', cursor: markerCursor },
+    bracket: { color: '#7f8c8d', fontWeight: 'bold' as const, cursor: markerCursor },
     cutPoint: {
         position: 'relative' as const,
         border: '2px dashed rgba(0,0,0,0.15)',
@@ -119,163 +146,120 @@ const styles = {
     },
     modalOverlay: {
         position: 'fixed' as const,
-        top: 0, left: 0, right: 0, bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.7)',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
+        alignItems: 'center',
         zIndex: 1000,
-        padding: '20px',
     },
     modalContent: {
         backgroundColor: '#fff',
-        borderRadius: '8px',
         padding: '30px',
-        maxWidth: '800px',
-        width: '100%',
-        maxHeight: '90vh',
-        overflowY: 'auto' as const,
-        boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+        borderRadius: '8px',
+        maxWidth: '600px',
+        width: '90%',
+        maxHeight: '80vh',
+        overflow: 'auto' as const,
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
     },
     modalHeader: {
-        fontSize: '1.8em',
-        marginBottom: '20px',
+        fontSize: '1.5em',
         fontWeight: 'bold' as const,
+        marginBottom: '20px',
+        paddingBottom: '10px',
+        borderBottom: '2px solid #3498db',
     },
     modalSection: {
         marginBottom: '30px',
-        borderBottom: '1px solid #ccc',
-        paddingBottom: '20px',
     },
     textarea: {
         width: '100%',
-        minHeight: '150px',
+        minHeight: '120px',
+        padding: '10px',
         fontFamily: 'monospace',
         fontSize: '0.9em',
-        padding: '10px',
-        border: '2px solid #ccc',
+        border: '1px solid #bdc3c7',
         borderRadius: '4px',
         resize: 'vertical' as const,
+        boxSizing: 'border-box' as const,
     },
     button: {
-        backgroundColor: '#2980b9',
-        color: 'white',
-        border: 'none',
         padding: '10px 20px',
-        fontSize: '1em',
-        cursor: 'pointer',
-        fontFamily: "'Patrick Hand', cursive",
+        fontSize: '0.9em',
+        border: 'none',
         borderRadius: '4px',
+        backgroundColor: '#3498db',
+        color: '#fff',
+        cursor: 'pointer',
         marginRight: '10px',
-        boxShadow: '2px 2px 4px rgba(0,0,0,0.2)',
+        transition: 'background 0.2s',
     },
     errorText: {
         color: '#e74c3c',
+        fontSize: '0.85em',
         marginTop: '10px',
-        fontSize: '0.9em',
-    },
-    gearButton: {
-        position: 'absolute' as const,
-        right: '20px',
-        top: '20px',
-        background: 'none',
-        border: 'none',
-        fontSize: '1.5em',
-        cursor: 'pointer',
-        padding: '10px',
-    },
+        padding: '8px',
+        backgroundColor: '#fadbd8',
+        borderRadius: '4px',
+        border: '1px solid #e74c3c',
+    }
 };
-
-// --- Settings Modal Component ---
-
-const SettingsModal = ({
-    isOpen,
-    onClose,
-    onGenerateFhir,
-    onUpdateKey,
-    onResetFhir,
-    onResetKey
-}: {
-    isOpen: boolean;
-    onClose: () => void;
-    onGenerateFhir: (fhirJson: string) => Promise<void>;
-    onUpdateKey: (privateKeyJwk: string) => Promise<void>;
-    onResetFhir: () => void;
-    onResetKey: () => void;
-}) => {
-    const [fhirInput, setFhirInput] = useState('');
-    const [keyInput, setKeyInput] = useState('');
-    const [fhirError, setFhirError] = useState('');
-    const [keyError, setKeyError] = useState('');
-
-    if (!isOpen) return null;
-
-    const handleGenerateFhir = async () => {
-        setFhirError('');
-        try {
-            await onGenerateFhir(fhirInput);
-            setFhirInput('');
-        } catch (e: any) {
-            setFhirError(e.message || 'Failed to generate SD-JWT');
-        }
-    };
-
-    const handleUpdateKey = async () => {
-        setKeyError('');
-        try {
-            await onUpdateKey(keyInput);
-            setKeyInput('');
-        } catch (e: any) {
-            setKeyError(e.message || 'Failed to update key');
-        }
-    };
-
-    return (
-        <div style={styles.modalOverlay} onClick={onClose}>
-            <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                <div style={styles.modalHeader}>
-                    ⚙️ Settings
-                    <button onClick={onClose} style={{ ...styles.button, float: 'right' as const }}>Close</button>
-                </div>
-
-                <div style={styles.modalSection}>
-                    <h3>Custom FHIR Content</h3>
-                    <p>Paste any valid FHIR resource (Bundle, Patient, etc.):</p>
-                    <textarea
-                        style={styles.textarea}
-                        value={fhirInput}
-                        onChange={(e) => setFhirInput(e.target.value)}
-                        placeholder='{"resourceType": "Patient", "id": "example", ...}'
-                    />
-                    {fhirError && <div style={styles.errorText}>{fhirError}</div>}
-                    <div style={{ marginTop: '10px' }}>
-                        <button style={styles.button} onClick={handleGenerateFhir}>Generate SD-JWT</button>
-                        <button style={{ ...styles.button, backgroundColor: '#e74c3c' }} onClick={onResetFhir}>Reset to Default</button>
-                    </div>
-                </div>
-
-                <div style={styles.modalSection}>
-                    <h3>Custom Private Key</h3>
-                    <p>Paste a JWK private key (ES256, RS256, etc.):</p>
-                    <textarea
-                        style={styles.textarea}
-                        value={keyInput}
-                        onChange={(e) => setKeyInput(e.target.value)}
-                        placeholder='{"kty": "EC", "crv": "P-256", "d": "...", ...}'
-                    />
-                    {keyError && <div style={styles.errorText}>{keyError}</div>}
-                    <div style={{ marginTop: '10px' }}>
-                        <button style={styles.button} onClick={handleUpdateKey}>Update Key</button>
-                        <button style={{ ...styles.button, backgroundColor: '#e74c3c' }} onClick={onResetKey}>Reset Key</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 
 // --- Data loading helpers ---
+
+async function parseDisclosuresFromFile(rows: DisclosureFileRow[], hashAlg: string): Promise<Disclosure[]> {
+    const normalizedAlg = normalizeHashAlgorithm(hashAlg);
+    return Promise.all(
+        rows.map(async (row) => {
+            const parsed = await Disclosure.parse(row.encoded);
+            // Always re-hash using the algorithm advertised in the JWT payload.
+            await parsed.calculateDigest(normalizedAlg);
+            return parsed;
+        })
+    );
+}
+
+// --- Helper: Derive Public Key from Private Key ---
+
+async function derivePublicKey(privateJwk: any): Promise<any> {
+    // Strip private fields from the supplied JWK and ensure an alg is present.
+    const { d, p, q, dp, dq, qi, oth, k, ...publicOnly } = privateJwk as any;
+    const alg = privateJwk.alg || (privateJwk.kty === 'EC' ? 'ES256' : 'RS256');
+    return { ...publicOnly, alg };
+}
+
+// --- Helper: Pack Custom FHIR Content ---
+
+async function packCustomFhir(fhirJson: string, privateJwk: any): Promise<{
+    sdJwt: SDJwt;
+    hashAlg: string;
+    publicKey: any;
+}> {
+    // Parse FHIR JSON
+    const fhirResource = JSON.parse(fhirJson);
+
+    // Determine algorithm from key
+    const alg = privateJwk.alg || (privateJwk.kty === 'EC' ? 'ES256' : 'RS256');
+
+    // Import private key
+    const privateKey = await jose.importJWK(privateJwk, alg);
+
+    // Pack FHIR resource into SD-JWT
+    const { sdJwt } = await packFhirSdJwt(fhirResource, privateKey, { alg });
+
+    // Derive public key
+    const publicKey = await derivePublicKey(privateJwk);
+
+    // Get hash algorithm from SD-JWT
+    const jwtPayload = jose.decodeJwt(sdJwt.jwt);
+    const hashAlg = normalizeHashAlgorithm((jwtPayload as any)[DIGEST_ALG_KEY] as string | undefined);
+
+    return { sdJwt, hashAlg, publicKey };
+}
 
 async function safeParseSdJwt(raw: string): Promise<SDJwt> {
     try {
@@ -289,20 +273,26 @@ async function safeParseSdJwt(raw: string): Promise<SDJwt> {
 
 async function loadArtifacts() {
     const sdJwtText = sdJwtTextRaw.trim();
-    const parsedSdJwt = await safeParseSdJwt(sdJwtText);
-
-    if (parsedSdJwt.disclosures.length === 0) {
-        throw new Error('No disclosures found in sdjwt.txt');
-    }
-
     const jwtPart = sdJwtText.split('~')[0];
     const payload = jose.decodeJwt(jwtPart);
     const hashAlg = normalizeHashAlgorithm((payload as any)[DIGEST_ALG_KEY] as string | undefined);
 
-    // Ensure all disclosures have digests calculated with the correct algorithm
-    await Promise.all(parsedSdJwt.disclosures.map((d) => d.calculateDigest(hashAlg)));
+    const parsedSdJwt = await safeParseSdJwt(sdJwtText);
 
-    return { sdJwt: parsedSdJwt, hashAlg, issuerKey: issuerPublicJwk };
+    const loadedDisclosures = disclosureRows
+        ? await parseDisclosuresFromFile(disclosureRows as DisclosureFileRow[], hashAlg)
+        : parsedSdJwt.disclosures;
+
+    if (loadedDisclosures.length === 0) {
+        throw new Error('No disclosures found in sdjwt.txt or data/disclosures.json');
+    }
+
+    // Ensure digests match the advertised algorithm.
+    await Promise.all(loadedDisclosures.map((d) => d.calculateDigest(hashAlg)));
+
+    const hydratedSdJwt = new SDJwt(parsedSdJwt.jwt, loadedDisclosures, parsedSdJwt.kbJwt);
+
+    return { sdJwt: hydratedSdJwt, hashAlg, issuerKey: issuerPublicJwk, issuerPrivateKey: issuerPrivateJwk };
 }
 
 // --- Helper: Trace Disclosures ---
@@ -542,7 +532,7 @@ const JsonNode = ({
                         : (entries as [string, any][]).map(([key, val], idx) => (
                             <div key={key}>
                                 <span
-                                    style={{ ...styles.key, cursor: 'pointer' }}
+                                    style={{ ...styles.key, cursor: markerCursor }}
                                     onClick={(e) => handleKeyClick(e, key, val)}
                                 >
                                     "{key}":
@@ -583,33 +573,6 @@ const JsonNode = ({
     );
 };
 
-// --- Main App Component ---
-
-// --- Helper: Strip Empty Arrays ---
-
-function stripEmptyArrays(obj: any): any {
-    if (Array.isArray(obj)) {
-        const newArr = obj.map(stripEmptyArrays).filter(item => item !== undefined);
-        return newArr.length > 0 ? newArr : undefined;
-    }
-    if (typeof obj === 'object' && obj !== null) {
-        const newObj: any = {};
-        let hasKeys = false;
-        for (const [key, val] of Object.entries(obj)) {
-            const cleanVal = stripEmptyArrays(val);
-            if (cleanVal !== undefined) {
-                newObj[key] = cleanVal;
-                hasKeys = true;
-            }
-        }
-        // We don't strip empty objects, only arrays as requested, 
-        // but if an object becomes empty because all its array props were stripped, 
-        // it might be worth keeping or dropping? 
-        // FHIR usually allows empty objects if they have extensions, but here we'll just keep them.
-        return newObj;
-    }
-    return obj;
-}
 
 // --- Main App Component ---
 
@@ -677,6 +640,104 @@ const CopyButton = ({ text, label }: { text: string, label?: string }) => {
     );
 };
 
+// --- Settings Modal Component ---
+
+const SettingsModal = ({
+    isOpen,
+    onClose,
+    onGenerateFhir,
+    onUpdateKey,
+    onResetFhir,
+    onResetKey
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    onGenerateFhir: (fhirJson: string) => Promise<void>;
+    onUpdateKey: (privateKeyJwk: string) => Promise<void>;
+    onResetFhir: () => void;
+    onResetKey: () => void;
+}) => {
+    const [fhirInput, setFhirInput] = useState('');
+    const [keyInput, setKeyInput] = useState('');
+    const [fhirError, setFhirError] = useState('');
+    const [keyError, setKeyError] = useState('');
+
+    if (!isOpen) return null;
+
+    const handleGenerateFhir = async () => {
+        setFhirError('');
+        try {
+            await onGenerateFhir(fhirInput);
+            setFhirInput('');
+        } catch (e: any) {
+            setFhirError(e.message || 'Failed to generate SD-JWT');
+        }
+    };
+
+    const handleUpdateKey = async () => {
+        setKeyError('');
+        try {
+            await onUpdateKey(keyInput);
+            setKeyInput('');
+        } catch (e: any) {
+            setKeyError(e.message || 'Failed to update key');
+        }
+    };
+
+    const handleResetFhirClick = async () => {
+        setFhirError('');
+        try {
+            await onResetFhir();
+            setFhirInput('');
+        } catch (e: any) {
+            setFhirError(e.message || 'Failed to reset');
+        }
+    };
+
+    return (
+        <div style={styles.modalOverlay} onClick={onClose}>
+            <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                <div style={styles.modalHeader}>
+                    ⚙️ Settings
+                    <button onClick={onClose} style={{ ...styles.button, float: 'right' as const }}>Close</button>
+                </div>
+
+                <div style={styles.modalSection}>
+                    <h3>Custom FHIR Content</h3>
+                    <p>Paste any valid FHIR resource (Bundle, Patient, etc.):</p>
+                    <textarea
+                        style={styles.textarea}
+                        value={fhirInput}
+                        onChange={(e) => setFhirInput(e.target.value)}
+                        placeholder='{"resourceType": "Patient", "id": "example", ...}'
+                    />
+                    {fhirError && <div style={styles.errorText}>{fhirError}</div>}
+                    <div style={{ marginTop: '10px' }}>
+                        <button style={styles.button} onClick={handleGenerateFhir}>Generate SD-JWT</button>
+                        <button style={{ ...styles.button, backgroundColor: '#e74c3c' }} onClick={handleResetFhirClick}>Reset to Default</button>
+                    </div>
+                </div>
+
+                <div style={styles.modalSection}>
+                    <h3>Custom Private Key</h3>
+                    <p>Paste a JWK private key (ES256, RS256, etc.):</p>
+                    <textarea
+                        style={styles.textarea}
+                        value={keyInput}
+                        onChange={(e) => setKeyInput(e.target.value)}
+                        placeholder='{"kty": "EC", "crv": "P-256", "d": "...", ...}'
+                    />
+                    {keyError && <div style={styles.errorText}>{keyError}</div>}
+                    <div style={{ marginTop: '10px' }}>
+                        <button style={styles.button} onClick={handleUpdateKey}>Update Key</button>
+                        <button style={{ ...styles.button, backgroundColor: '#e74c3c' }} onClick={onResetKey}>Reset Key</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 // --- Main App Component ---
 
 const App = () => {
@@ -697,13 +758,27 @@ const App = () => {
     const [hashAlg, setHashAlg] = useState<string>('SHA-256');
     const [loadError, setLoadError] = useState<string | null>(null);
 
+    // Settings state
+    const [settingsOpen, setSettingsOpen] = useState(false);
+    const [customPrivateKey, setCustomPrivateKey] = useState<any | null>(null);
+    const [defaultArtifacts, setDefaultArtifacts] = useState<{
+        sdJwt: SDJwt;
+        issuerKey: any;
+        issuerPrivateKey: any;
+        hashAlg: string;
+    } | null>(null);
+
     // Interaction state
     const [isDragging, setIsDragging] = useState(false);
 
     useEffect(() => {
         async function load() {
             try {
-                const { sdJwt: hydratedSdJwt, hashAlg, issuerKey } = await loadArtifacts();
+                const { sdJwt: hydratedSdJwt, hashAlg, issuerKey, issuerPrivateKey } = await loadArtifacts();
+
+                // Store defaults for reset
+                setDefaultArtifacts({ sdJwt: hydratedSdJwt, issuerKey, issuerPrivateKey, hashAlg });
+
                 setSdJwt(hydratedSdJwt);
                 setIssuerKey(issuerKey);
                 setHashAlg(hashAlg);
@@ -718,6 +793,51 @@ const App = () => {
         }
         load();
     }, []);
+
+    // Settings handlers
+    const handleGenerateFhir = useCallback(async (fhirJson: string) => {
+        const privateKey = customPrivateKey || defaultArtifacts?.issuerPrivateKey;
+        if (!privateKey) throw new Error('No private key available');
+
+        const { sdJwt: newSdJwt, hashAlg: newHashAlg, publicKey } = await packCustomFhir(fhirJson, privateKey);
+
+        setSdJwt(newSdJwt);
+        setHashAlg(newHashAlg);
+        setIssuerKey(publicKey);
+        setRedactedDigests(new Set());
+
+        const { payload, pathMap } = await traceDisclosures(newSdJwt, newHashAlg);
+        setFullPayload(payload);
+        setPathMap(pathMap);
+    }, [customPrivateKey, defaultArtifacts]);
+
+    const handleUpdateKey = useCallback(async (privateKeyJwk: string) => {
+        const parsedKey = JSON.parse(privateKeyJwk);
+        setCustomPrivateKey(parsedKey);
+
+        const publicKey = await derivePublicKey(parsedKey);
+        setIssuerKey(publicKey);
+    }, []);
+
+    const handleResetFhir = useCallback(async () => {
+        if (!defaultArtifacts) return;
+
+        setSdJwt(defaultArtifacts.sdJwt);
+        setHashAlg(defaultArtifacts.hashAlg);
+        setIssuerKey(customPrivateKey ? await derivePublicKey(customPrivateKey) : defaultArtifacts.issuerKey);
+        setRedactedDigests(new Set());
+
+        const { payload, pathMap } = await traceDisclosures(defaultArtifacts.sdJwt, defaultArtifacts.hashAlg);
+        setFullPayload(payload);
+        setPathMap(pathMap);
+    }, [defaultArtifacts, customPrivateKey]);
+
+    const handleResetKey = useCallback(async () => {
+        if (!defaultArtifacts) return;
+
+        setCustomPrivateKey(null);
+        setIssuerKey(defaultArtifacts.issuerKey);
+    }, [defaultArtifacts]);
 
     // Global mouse up to stop dragging
     useEffect(() => {
@@ -775,7 +895,8 @@ const App = () => {
                 await jose.importJWK(issuerKey, issuerAlg)
             );
 
-            const cleanFhir = stripEmptyArrays(verified);
+            // verifyFhirSdJwt now strips empty arrays automatically
+            const cleanFhir = verified;
 
             setOutput({
                 artifact: presentationStr,
@@ -796,7 +917,16 @@ const App = () => {
 
     return (
         <div style={styles.container} onMouseDownCapture={handleMouseDown} data-layout="container">
-            <div style={styles.header}>Redaction Studio</div>
+            <div style={styles.header}>
+                FHIRedaction Studio
+                <button
+                    onClick={() => setSettingsOpen(true)}
+                    style={styles.gearButton}
+                    title="Settings"
+                >
+                    ⚙️
+                </button>
+            </div>
 
             <div style={styles.mainContent} data-layout="main-content">
                 {/* Left Pane: Interaction */}
@@ -874,6 +1004,15 @@ const App = () => {
                     )}
                 </div>
             </div>
+
+            <SettingsModal
+                isOpen={settingsOpen}
+                onClose={() => setSettingsOpen(false)}
+                onGenerateFhir={handleGenerateFhir}
+                onUpdateKey={handleUpdateKey}
+                onResetFhir={handleResetFhir}
+                onResetKey={handleResetKey}
+            />
         </div>
     );
 };

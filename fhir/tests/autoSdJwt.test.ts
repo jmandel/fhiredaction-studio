@@ -75,15 +75,20 @@ describe("FHIR auto SD-JWT", () => {
       ],
     };
 
-    const { packedPayload, disclosures } = await packFhirSdJwt(bundle, privKey);
+    const { sdJwt, packedPayload } = await packFhirSdJwt(bundle, privKey);
 
+    // Bundle entries are concealed at the entry level; resources appear only after disclosure.
     expect(packedPayload.entry).toHaveLength(2);
-    const patientResource = packedPayload.entry[0].resource as any;
-    // Patient resource is selectively disclosable as a whole (name array elements are leaf cutpoints)
-    expect(patientResource.name[0]["..."]).toBeDefined();
+    expect(packedPayload.entry[0]["..."]).toBeDefined();
+    expect(packedPayload.entry[1]["..."]).toBeDefined();
 
-    const conditionResource = packedPayload.entry[1].resource as any;
-    expect(conditionResource._sd).toBeDefined();
+    // After verification, the Patient resource is intact and per-element name/telecom are present.
+    const verifier = new Verifier();
+    const verified = await verifier.verify(sdJwt, pubKey);
+    const patient = verified.entry[0].resource;
+    expect(Array.isArray(patient.name)).toBe(true);
+    expect(patient.name).toHaveLength(2);
+    expect(patient.telecom).toHaveLength(2);
   });
 
   it("does not pack Immunization as a single undisclosed blob", async () => {
@@ -106,10 +111,16 @@ describe("FHIR auto SD-JWT", () => {
       ],
     };
 
-    const { packedPayload } = await packFhirSdJwt(bundle, privKey);
-    const imm = packedPayload.entry[0].resource as any;
-    expect(Array.isArray(imm._sd)).toBe(true);
-    expect(imm._sd.length).toBeGreaterThanOrEqual(1);
+    const { sdJwt, packedPayload } = await packFhirSdJwt(bundle, privKey);
+    // Entry is concealed as a unit.
+    expect(packedPayload.entry[0]["..."]).toBeDefined();
+
+    // Full Immunization content is recovered when disclosed/verified.
+    const verifier = new Verifier();
+    const verified = await verifier.verify(sdJwt, pubKey);
+    const imm = verified.entry[0].resource;
+    expect(imm.vaccineCode.coding[0].code).toBe("207");
+    expect(imm.status).toBe("completed");
   });
 
   it("conceals required complex fields like clinicalStatus and subject on Condition", async () => {
@@ -129,9 +140,40 @@ describe("FHIR auto SD-JWT", () => {
       ],
     };
 
-    const { packedPayload, disclosures } = await packFhirSdJwt(bundle, privKey);
+    const { sdJwt, packedPayload } = await packFhirSdJwt(bundle, privKey);
 
-    const conditionResource = packedPayload.entry[0].resource as any;
-    expect(conditionResource._sd).toBeDefined();
+    // Entry is concealed at entry level.
+    expect(packedPayload.entry[0]["..."]).toBeDefined();
+
+    // After disclosure, required complex fields are present.
+    const verifier = new Verifier();
+    const verified = await verifier.verify(sdJwt, pubKey);
+    const condition = verified.entry[0].resource;
+    expect(condition.clinicalStatus).toBeDefined();
+    expect(condition.subject.reference).toBe("Patient/p1");
+  });
+
+  it("always discloses modifier elements while concealing non-modifiers", async () => {
+    const allergy = {
+      resourceType: "AllergyIntolerance" as const,
+      clinicalStatus: { coding: [{ system: "x", code: "active" }] }, // modifier element
+      code: { text: "Peanut" }, // non-modifier complex datatype (should be SD'able)
+    };
+
+    const { sdJwt, packedPayload, disclosures } = await packFhirSdJwt(allergy, privKey);
+
+    // Modifier element stays in the issuer-signed payload unredacted
+    expect(packedPayload.clinicalStatus).toBeDefined();
+    // Non-modifier is concealed
+    expect(packedPayload.code).toBeUndefined();
+    expect(Array.isArray(packedPayload._sd)).toBe(true);
+    expect(disclosures.some((d) => d.key === "code")).toBe(true);
+    expect(disclosures.some((d) => d.key === "clinicalStatus")).toBe(false);
+
+    // After verification, both are present
+    const verifier = new Verifier();
+    const verified = await verifier.verify(sdJwt, pubKey);
+    expect(verified.clinicalStatus.coding[0].code).toBe("active");
+    expect(verified.code.text).toBe("Peanut");
   });
 });

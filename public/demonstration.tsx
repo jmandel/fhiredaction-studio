@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { SDJwt, SD_KEY, ARRAY_ELEMENT_KEY, DIGEST_ALG_KEY } from '../src/sdJwt';
-import { Verifier } from '../src/verifier';
+import { verifyFhirSdJwt } from '../fhir/src/autoSdJwt';
 import { Disclosure } from '../src/disclosure';
 import { normalizeHashAlgorithm } from '../src/common';
 import { packFhirSdJwt } from '../fhir/src/autoSdJwt';
@@ -888,15 +888,12 @@ const App = () => {
             const newSdJwt = new SDJwt(sdJwt.jwt, filteredDisclosures);
             const presentationStr = newSdJwt.toString();
 
-            const verifier = new Verifier();
+            // Single pass FHIR-aware verification (also strips empty arrays)
             const issuerAlg = (issuerKey as any)?.alg || 'ES256';
-            const verified = await verifier.verify(
-                newSdJwt,
+            const cleanFhir = await verifyFhirSdJwt(
+                presentationStr,
                 await jose.importJWK(issuerKey, issuerAlg)
             );
-
-            // verifyFhirSdJwt now strips empty arrays automatically
-            const cleanFhir = verified;
 
             setOutput({
                 artifact: presentationStr,
@@ -904,7 +901,7 @@ const App = () => {
                     jwtPayload: jose.decodeJwt(newSdJwt.jwt),
                     disclosures: filteredDisclosures.map(d => d.encoded)
                 },
-                verification: { verified: true, claimCount: Object.keys(verified).length },
+                verification: { verified: true, claimCount: Object.keys(cleanFhir ?? {}).length },
                 cleanFhir
             });
         }, 300); // 300ms debounce

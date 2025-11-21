@@ -1,0 +1,410 @@
+[
+  {
+    "digest": "IgdEvS74un91z775KGys0c-SVoDacp0Ry1fAX5h7hLQ",
+    "encoded": "WyJMRTI2WHgwc3pDdi1tVzlOc2YxV1BBIiwidHlwZSIsImNvbGxlY3Rpb24iXQ",
+    "value": "collection",
+    "salt": "LE26Xx0szCv-mW9Nsf1WPA"
+  },
+  {
+    "digest": "4nUNy3OfLfZTc6-ulVBqQDR5TEsd4dErhrNmXUdDSLk",
+    "encoded": "WyJVdC1tS3owdS11emJXZ0VVa0VVTVB3Iix7ImZhbWlseSI6IlNtYXJ0IiwiZ2l2ZW4iOlsiQWxpY2UiLCJKIl0sInRleHQiOiJBbGljZSBKLiBTbWFydCJ9XQ",
+    "value": {
+      "family": "Smart",
+      "given": [
+        "Alice",
+        "J"
+      ],
+      "text": "Alice J. Smart"
+    },
+    "salt": "Ut-mKz0u-uzbWgEUkEUMPw"
+  },
+  {
+    "digest": "1vQiVjlvu_ZGch_uWqxDqIeI3NAL0DmIHBh7yIO7Ang",
+    "encoded": "WyJ1ZkEwaDZVQ2VONllKd2xOYmU0MUFBIix7InN5c3RlbSI6Imh0dHA6Ly9ob3NwaXRhbC5leGFtcGxlLm9yZy9tcm4iLCJ2YWx1ZSI6Ik1STi0xMjM0NSIsInR5cGUiOnsiY29kaW5nIjpbeyJzeXN0ZW0iOiJodHRwOi8vdGVybWlub2xvZ3kuaGw3Lm9yZy9Db2RlU3lzdGVtL3YyLTAyMDMiLCJjb2RlIjoiTVIifV19fV0",
+    "value": {
+      "system": "http://hospital.example.org/mrn",
+      "value": "MRN-12345",
+      "type": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+            "code": "MR"
+          }
+        ]
+      }
+    },
+    "salt": "ufA0h6UCeN6YJwlNbe41AA"
+  },
+  {
+    "digest": "44UKOs-ZhVof1SlKp5ftosfKnKq78GhOyPXK_XhEtV4",
+    "encoded": "WyIxWHd0VmFlY1R5aHpZVE93dWgxb193Iix7InN5c3RlbSI6Imh0dHA6Ly9obDcub3JnL2ZoaXIvc2lkL3VzLXNzbiIsInZhbHVlIjoiMDAwLTAwLTAwMDAiLCJ0eXBlIjp7ImNvZGluZyI6W3sic3lzdGVtIjoiaHR0cDovL3Rlcm1pbm9sb2d5LmhsNy5vcmcvQ29kZVN5c3RlbS92Mi0wMjAzIiwiY29kZSI6IlNTTiJ9XX19XQ",
+    "value": {
+      "system": "http://hl7.org/fhir/sid/us-ssn",
+      "value": "000-00-0000",
+      "type": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+            "code": "SSN"
+          }
+        ]
+      }
+    },
+    "salt": "1XwtVaecTyhzYTOwuh1o_w"
+  },
+  {
+    "digest": "-bjm8yizyxl6LVBPnDvZwTehgB2FVGuHWZLpNPqapdI",
+    "encoded": "WyJPeUNNbGJ1UkFsd054MEdReVN6LTBBIix7InN5c3RlbSI6Imh0dHA6Ly9kbXYuZXhhbXBsZS5vcmcvZGwiLCJ2YWx1ZSI6IkRMLTk4NzY1NDMyMSIsInR5cGUiOnsiY29kaW5nIjpbeyJzeXN0ZW0iOiJodHRwOi8vdGVybWlub2xvZ3kuaGw3Lm9yZy9Db2RlU3lzdGVtL3YyLTAyMDMiLCJjb2RlIjoiREwifV19fV0",
+    "value": {
+      "system": "http://dmv.example.org/dl",
+      "value": "DL-987654321",
+      "type": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+            "code": "DL"
+          }
+        ]
+      }
+    },
+    "salt": "OyCMlbuRAlwNx0GQySz-0A"
+  },
+  {
+    "digest": "4w1_TrolkZxGVzeCz7zu1CwIRE4gmjgsdWF-o3FlxcU",
+    "encoded": "WyJUNXJHYlBKTDg3cEc5a0pOelNNSHN3Iix7InN5c3RlbSI6InBob25lIiwidmFsdWUiOiI1NTUtNTU1LTU1NTUiLCJ1c2UiOiJtb2JpbGUifV0",
+    "value": {
+      "system": "phone",
+      "value": "555-555-5555",
+      "use": "mobile"
+    },
+    "salt": "T5rGbPJL87pG9kJNzSMHsw"
+  },
+  {
+    "digest": "fohQUn29YQYBlIU7f_3zH1KfuGIycV_w2r_M-AhE_l4",
+    "encoded": "WyJNWFY2cGwzNmgtZERySFRqMmotc0ZnIix7InN5c3RlbSI6ImVtYWlsIiwidmFsdWUiOiJhbGljZUBleGFtcGxlLmNvbSIsInVzZSI6ImhvbWUifV0",
+    "value": {
+      "system": "email",
+      "value": "alice@example.com",
+      "use": "home"
+    },
+    "salt": "MXV6pl36h-dDrHTj2j-sFg"
+  },
+  {
+    "digest": "3poppJPnyhFAg1aiyW_5ZbrOXGrHyETNQKpYs9dsLY4",
+    "encoded": "WyJLZDZnNHA5Tm83VUExYTRwb1BtbUx3Iix7InVzZSI6ImhvbWUiLCJsaW5lIjpbIjEyMyBSYWJiaXQgSG9sZSJdLCJjaXR5IjoiV29uZGVybGFuZCIsInN0YXRlIjoiQ0EiLCJwb3N0YWxDb2RlIjoiMTIzNDUifV0",
+    "value": {
+      "use": "home",
+      "line": [
+        "123 Rabbit Hole"
+      ],
+      "city": "Wonderland",
+      "state": "CA",
+      "postalCode": "12345"
+    },
+    "salt": "Kd6g4p9No7UA1a4poPmmLw"
+  },
+  {
+    "digest": "F_970ZZVD4jpqX-2kTDDgM38tcN0Kw3Se478tIfnXKo",
+    "encoded": "WyJ3TGE1VGtlajc2S3ktLVZpS0lMRURRIix7InVzZSI6IndvcmsiLCJsaW5lIjpbIjQ1NiBDb3Jwb3JhdGUgQmx2ZCJdLCJjaXR5IjoiTWV0cm9wb2xpcyIsInN0YXRlIjoiTlkiLCJwb3N0YWxDb2RlIjoiNTQzMjEifV0",
+    "value": {
+      "use": "work",
+      "line": [
+        "456 Corporate Blvd"
+      ],
+      "city": "Metropolis",
+      "state": "NY",
+      "postalCode": "54321"
+    },
+    "salt": "wLa5Tkej76Ky--ViKILEDQ"
+  },
+  {
+    "digest": "UIAAc1OELYxQYcNrOPHG0NOy_49B6yklw6xjcfC0Kjo",
+    "encoded": "WyJJS0NVaXZmemplcEdYa3JPRmt1LXdBIiwiYmlydGhEYXRlIiwiMTk4MC0wMS0wMSJd",
+    "value": "1980-01-01",
+    "salt": "IKCUivfzjepGXkrOFku-wA"
+  },
+  {
+    "digest": "L1xKg5KItGYHgbBAu5CToRK253He8VXs3PnnfGV2WFQ",
+    "encoded": "WyIwWHEyc2htemZUZ09scGZzMVNtVlFBIix7ImZ1bGxVcmwiOiJodHRwczovL3NkLmV4YW1wbGUub3JnL2ZoaXIvUGF0aWVudC9wMSIsInJlc291cmNlIjp7InJlc291cmNlVHlwZSI6IlBhdGllbnQiLCJpZCI6InAxIiwiYWN0aXZlIjp0cnVlLCJuYW1lIjpbeyIuLi4iOiI0blVOeTNPZkxmWlRjNi11bFZCcVFEUjVURXNkNGRFcmhyTm1YVWREU0xrIn1dLCJpZGVudGlmaWVyIjpbeyIuLi4iOiIxdlFpVmpsdnVfWkdjaF91V3F4RHFJZUkzTkFMMERtSUhCaDd5SU83QW5nIn0seyIuLi4iOiI0NFVLT3MtWmhWb2YxU2xLcDVmdG9zZktuS3E3OEdoT3lQWEtfWGhFdFY0In0seyIuLi4iOiItYmptOHlpenl4bDZMVkJQbkR2WndUZWhnQjJGVkd1SFdaTHBOUHFhcGRJIn1dLCJ0ZWxlY29tIjpbeyIuLi4iOiI0dzFfVHJvbGtaeEdWemVDejd6dTFDd0lSRTRnbWpnc2RXRi1vM0ZseGNVIn0seyIuLi4iOiJmb2hRVW4yOVlRWUJsSVU3Zl8zekgxS2Z1R0l5Y1ZfdzJyX00tQWhFX2w0In1dLCJhZGRyZXNzIjpbeyIuLi4iOiIzcG9wcEpQbnloRkFnMWFpeVdfNVpick9YR3JIeUVUTlFLcFlzOWRzTFk0In0seyIuLi4iOiJGXzk3MFpaVkQ0anBxWC0ya1RERGdNMzh0Y04wS3czU2U0Nzh0SWZuWEtvIn1dLCJfc2QiOlsiVUlBQWMxT0VMWXhRWWNOck9QSEcwTk95XzQ5QjZ5a2x3NnhqY2ZDMEtqbyJdfX1d",
+    "value": {
+      "fullUrl": "https://sd.example.org/fhir/Patient/p1",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "p1",
+        "active": true,
+        "name": [
+          {
+            "...": "4nUNy3OfLfZTc6-ulVBqQDR5TEsd4dErhrNmXUdDSLk"
+          }
+        ],
+        "identifier": [
+          {
+            "...": "1vQiVjlvu_ZGch_uWqxDqIeI3NAL0DmIHBh7yIO7Ang"
+          },
+          {
+            "...": "44UKOs-ZhVof1SlKp5ftosfKnKq78GhOyPXK_XhEtV4"
+          },
+          {
+            "...": "-bjm8yizyxl6LVBPnDvZwTehgB2FVGuHWZLpNPqapdI"
+          }
+        ],
+        "telecom": [
+          {
+            "...": "4w1_TrolkZxGVzeCz7zu1CwIRE4gmjgsdWF-o3FlxcU"
+          },
+          {
+            "...": "fohQUn29YQYBlIU7f_3zH1KfuGIycV_w2r_M-AhE_l4"
+          }
+        ],
+        "address": [
+          {
+            "...": "3poppJPnyhFAg1aiyW_5ZbrOXGrHyETNQKpYs9dsLY4"
+          },
+          {
+            "...": "F_970ZZVD4jpqX-2kTDDgM38tcN0Kw3Se478tIfnXKo"
+          }
+        ],
+        "_sd": [
+          "UIAAc1OELYxQYcNrOPHG0NOy_49B6yklw6xjcfC0Kjo"
+        ]
+      }
+    },
+    "salt": "0Xq2shmzfTgOlpfs1SmVQA"
+  },
+  {
+    "digest": "qZhn2L_DqFSSVLQKBp4MyOvUEEZZLuDSzecbba4qlP8",
+    "encoded": "WyJjYkFSX3NSc2tCSlY3VE9NRXpjeXVRIiwic3ViamVjdCIseyJyZWZlcmVuY2UiOiJQYXRpZW50L3AxIn1d",
+    "value": {
+      "reference": "Patient/p1"
+    },
+    "salt": "cbAR_sRskBJV7TOMEzcyuQ"
+  },
+  {
+    "digest": "9TA4pYy_87SJGoBsnFxyXWOc2-P2XE3FE1OrbSA8qKM",
+    "encoded": "WyJnSXM3d014aGJSOWFBTmdndWJCeDdnIiwiY29kZSIseyJjb2RpbmciOlt7InN5c3RlbSI6Imh0dHA6Ly9zbm9tZWQuaW5mby9zY3QiLCJjb2RlIjoiNDQwNTQwMDYiLCJkaXNwbGF5IjoiVHlwZSAyIGRpYWJldGVzIG1lbGxpdHVzIn1dfV0",
+    "value": {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "44054006",
+          "display": "Type 2 diabetes mellitus"
+        }
+      ]
+    },
+    "salt": "gIs7wMxhbR9aANggubBx7g"
+  },
+  {
+    "digest": "4200SdgQazp2mydkKDwDhdTMI8djFEMq8DxvAye1_O8",
+    "encoded": "WyJndGE4Z3U5ZnF0eC1uOThjNDl4bDlnIix7ImZ1bGxVcmwiOiJodHRwczovL3NkLmV4YW1wbGUub3JnL2ZoaXIvQ29uZGl0aW9uL2MxIiwicmVzb3VyY2UiOnsicmVzb3VyY2VUeXBlIjoiQ29uZGl0aW9uIiwiaWQiOiJjMSIsImNsaW5pY2FsU3RhdHVzIjp7ImNvZGluZyI6W3sic3lzdGVtIjoiaHR0cDovL3Rlcm1pbm9sb2d5LmhsNy5vcmcvQ29kZVN5c3RlbS9jb25kaXRpb24tY2xpbmljYWwiLCJjb2RlIjoiYWN0aXZlIn1dfSwiX3NkIjpbIjlUQTRwWXlfODdTSkdvQnNuRnh5WFdPYzItUDJYRTNGRTFPcmJTQThxS00iLCJxWmhuMkxfRHFGU1NWTFFLQnA0TXlPdlVFRVpaTHVEU3plY2JiYTRxbFA4Il19fV0",
+    "value": {
+      "fullUrl": "https://sd.example.org/fhir/Condition/c1",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "c1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "_sd": [
+          "9TA4pYy_87SJGoBsnFxyXWOc2-P2XE3FE1OrbSA8qKM",
+          "qZhn2L_DqFSSVLQKBp4MyOvUEEZZLuDSzecbba4qlP8"
+        ]
+      }
+    },
+    "salt": "gta8gu9fqtx-n98c49xl9g"
+  },
+  {
+    "digest": "KayF0gmLdJV4bRcXVkLmW2j6U57LyiVphbZS9BGOQEI",
+    "encoded": "WyJqMjYzTGpET3E0UTIzbjJGbVJlMFNBIiwic3ViamVjdCIseyJyZWZlcmVuY2UiOiJQYXRpZW50L3AxIn1d",
+    "value": {
+      "reference": "Patient/p1"
+    },
+    "salt": "j263LjDOq4Q23n2FmRe0SA"
+  },
+  {
+    "digest": "sp-0oHyIQNCGQfeJlttEFP8TfcHkdqeGqagAu3ldRlM",
+    "encoded": "WyJlTWFUbFQtaGJTRHYwVWxqZ0FHTXVnIiwiY29kZSIseyJjb2RpbmciOlt7InN5c3RlbSI6Imh0dHA6Ly9sb2luYy5vcmciLCJjb2RlIjoiMjk0NjMtNyIsImRpc3BsYXkiOiJCb2R5IFdlaWdodCJ9XX1d",
+    "value": {
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body Weight"
+        }
+      ]
+    },
+    "salt": "eMaTlT-hbSDv0UljgAGMug"
+  },
+  {
+    "digest": "AayEP6juDkaepp5sAHwswP-sYwdZ263k-pGavt1WU8I",
+    "encoded": "WyJoeVRYYVRkRVVtbFhRRno4Mjl3eWZ3IiwidmFsdWVRdWFudGl0eSIseyJ2YWx1ZSI6NzAsInVuaXQiOiJrZyIsInN5c3RlbSI6Imh0dHA6Ly91bml0c29mbWVhc3VyZS5vcmciLCJjb2RlIjoia2cifV0",
+    "value": {
+      "value": 70,
+      "unit": "kg",
+      "system": "http://unitsofmeasure.org",
+      "code": "kg"
+    },
+    "salt": "hyTXaTdEUmlXQFz829wyfw"
+  },
+  {
+    "digest": "LENB537uekV9ehjIOQJSrTYbLh3L-I1uo6QNAVjPY50",
+    "encoded": "WyJUbUtqNEVpaEFGS3lvTWxQVENENjd3Iix7ImZ1bGxVcmwiOiJodHRwczovL3NkLmV4YW1wbGUub3JnL2ZoaXIvT2JzZXJ2YXRpb24vbzEiLCJyZXNvdXJjZSI6eyJyZXNvdXJjZVR5cGUiOiJPYnNlcnZhdGlvbiIsImlkIjoibzEiLCJzdGF0dXMiOiJmaW5hbCIsIl9zZCI6WyJBYXlFUDZqdURrYWVwcDVzQUh3c3dQLXNZd2RaMjYzay1wR2F2dDFXVThJIiwiS2F5RjBnbUxkSlY0YlJjWFZrTG1XMmo2VTU3THlpVnBoYlpTOUJHT1FFSSIsInNwLTBvSHlJUU5DR1FmZUpsdHRFRlA4VGZjSGtkcWVHcWFnQXUzbGRSbE0iXX19XQ",
+    "value": {
+      "fullUrl": "https://sd.example.org/fhir/Observation/o1",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "o1",
+        "status": "final",
+        "_sd": [
+          "AayEP6juDkaepp5sAHwswP-sYwdZ263k-pGavt1WU8I",
+          "KayF0gmLdJV4bRcXVkLmW2j6U57LyiVphbZS9BGOQEI",
+          "sp-0oHyIQNCGQfeJlttEFP8TfcHkdqeGqagAu3ldRlM"
+        ]
+      }
+    },
+    "salt": "TmKj4EihAFKyoMlPTCD67w"
+  },
+  {
+    "digest": "gtIpjPoKM8F0lmzSCnT_XaGVBHEmz7fUPJCq9KeXglQ",
+    "encoded": "WyJZblB6MUhzd2FTNG5Kc29aMkNadnh3IiwicGF0aWVudCIseyJyZWZlcmVuY2UiOiJQYXRpZW50L3AxIn1d",
+    "value": {
+      "reference": "Patient/p1"
+    },
+    "salt": "YnPz1HswaS4nJsoZ2CZvxw"
+  },
+  {
+    "digest": "6V7YCiFPhNQUb26IIqN_fXJ9-B3cAn7R7QR-KBsMGxg",
+    "encoded": "WyJkRXg4WUFpZENmaHlWeVotWlNRcWxBIiwiY29kZSIseyJjb2RpbmciOlt7InN5c3RlbSI6Imh0dHA6Ly9zbm9tZWQuaW5mby9zY3QiLCJjb2RlIjoiMzk1NzkwMDEiLCJkaXNwbGF5IjoiQW5hcGh5bGF4aXMifV19XQ",
+    "value": {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "39579001",
+          "display": "Anaphylaxis"
+        }
+      ]
+    },
+    "salt": "dEx8YAidCfhyVyZ-ZSQqlA"
+  },
+  {
+    "digest": "nKV-A2b40lkfdyEZ23dcQiLymxlSFqeGUjLwffvL7rY",
+    "encoded": "WyJHOUtOZUhnQzNfYVBpUjFndnFBa0ZnIix7ImZ1bGxVcmwiOiJodHRwczovL3NkLmV4YW1wbGUub3JnL2ZoaXIvQWxsZXJneUludG9sZXJhbmNlL2ExIiwicmVzb3VyY2UiOnsicmVzb3VyY2VUeXBlIjoiQWxsZXJneUludG9sZXJhbmNlIiwiaWQiOiJhMSIsImNsaW5pY2FsU3RhdHVzIjp7ImNvZGluZyI6W3sic3lzdGVtIjoiaHR0cDovL3Rlcm1pbm9sb2d5LmhsNy5vcmcvQ29kZVN5c3RlbS9hbGxlcmd5aW50b2xlcmFuY2UtY2xpbmljYWwiLCJjb2RlIjoiYWN0aXZlIn1dfSwiX3NkIjpbIjZWN1lDaUZQaE5RVWIyNklJcU5fZlhKOS1CM2NBbjdSN1FSLUtCc01HeGciLCJndElwalBvS004RjBsbXpTQ25UX1hhR1ZCSEVtejdmVVBKQ3E5S2VYZ2xRIl19fV0",
+    "value": {
+      "fullUrl": "https://sd.example.org/fhir/AllergyIntolerance/a1",
+      "resource": {
+        "resourceType": "AllergyIntolerance",
+        "id": "a1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "_sd": [
+          "6V7YCiFPhNQUb26IIqN_fXJ9-B3cAn7R7QR-KBsMGxg",
+          "gtIpjPoKM8F0lmzSCnT_XaGVBHEmz7fUPJCq9KeXglQ"
+        ]
+      }
+    },
+    "salt": "G9KNeHgC3_aPiR1gvqAkFg"
+  },
+  {
+    "digest": "aO-sIFHVkoO_M8OmXlrqM2MyRnTBdcKfXbVK-tHz-5Y",
+    "encoded": "WyJtUmhhYWxxNlA5VzF5N29PMlBhUlRRIiwicGF0aWVudCIseyJyZWZlcmVuY2UiOiJQYXRpZW50L3AxIn1d",
+    "value": {
+      "reference": "Patient/p1"
+    },
+    "salt": "mRhaalq6P9W1y7oO2PaRTQ"
+  },
+  {
+    "digest": "vgNao17-kZAUdN9843LxlTbab9w1QJI3UzvYTbGxPs8",
+    "encoded": "WyJKbDhIY0lsdTZYTUl2ZGZja3Bfbk9RIiwidmFjY2luZUNvZGUiLHsiY29kaW5nIjpbeyJzeXN0ZW0iOiJodHRwOi8vaGw3Lm9yZy9maGlyL3NpZC9jdngiLCJjb2RlIjoiMjA3IiwiZGlzcGxheSI6IkNPVklELTE5LCBtUk5BLCBMTlAtUywgUEYsIDEwMCBtY2cvMC41bUwgZG9zZSJ9XX1d",
+    "value": {
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "207",
+          "display": "COVID-19, mRNA, LNP-S, PF, 100 mcg/0.5mL dose"
+        }
+      ]
+    },
+    "salt": "Jl8HcIlu6XMIvdfckp_nOQ"
+  },
+  {
+    "digest": "Omzfoi_I_DAIt83JP9SqZu8RrAyaLoMELmBDzuKj2v4",
+    "encoded": "WyJGZFlfQzRUaGVEVXd6dFpXRmIzSHdRIiwib2NjdXJyZW5jZURhdGVUaW1lIiwiMjAyMS0wMS0wMSJd",
+    "value": "2021-01-01",
+    "salt": "FdY_C4TheDUwztZWFb3HwQ"
+  },
+  {
+    "digest": "gXeLPutz0Q8ZqYOZpLIenzDtpCtdpvlgBRKBgmDsStM",
+    "encoded": "WyJMN2s1YkJ2NTNvN1Nkd0haaGVkeGx3IiwibG9jYXRpb24iLHsicmVmZXJlbmNlIjoiI2xvYzEiLCJkaXNwbGF5IjoiRnJlZSBDbGluaWMifV0",
+    "value": {
+      "reference": "#loc1",
+      "display": "Free Clinic"
+    },
+    "salt": "L7k5bBv53o7SdwHZhedxlw"
+  },
+  {
+    "digest": "mMXe3V-JFCnMr7PuqpjT3eGRCwGBZY4vdP52sxbej30",
+    "encoded": "WyJ0dnJKUmdNbTFDZEVLdGNfQVVXX3FRIiwibmFtZSIsIkRvd250b3duIEZyZWUgQ2xpbmljIl0",
+    "value": "Downtown Free Clinic",
+    "salt": "tvrJRgMm1CdEKtc_AUW_qQ"
+  },
+  {
+    "digest": "hRjL1dP3FegOj4ZzxvkibxuFl54sL-SNeXLIjIza-1A",
+    "encoded": "WyJkYnJPOFdZTDVnWmk4c0pDSEc0M1d3IiwiYWRkcmVzcyIseyJsaW5lIjpbIjEwMCBTa2lkIFJvdyJdLCJjaXR5IjoiTWV0cm9wb2xpcyIsInN0YXRlIjoiTlkiLCJwb3N0YWxDb2RlIjoiNTQzMjEifV0",
+    "value": {
+      "line": [
+        "100 Skid Row"
+      ],
+      "city": "Metropolis",
+      "state": "NY",
+      "postalCode": "54321"
+    },
+    "salt": "dbrO8WYL5gZi8sJCHG43Ww"
+  },
+  {
+    "digest": "UPCmAHt8KCt-Ye4-13-ivR41tglBZIbD7M_fOzDp5uY",
+    "encoded": "WyJES3ZfVHhEbTJEblZ4Z2JobWt1eUFnIix7InJlc291cmNlVHlwZSI6IkxvY2F0aW9uIiwiaWQiOiJsb2MxIiwiX3NkIjpbIm1NWGUzVi1KRkNuTXI3UHVxcGpUM2VHUkN3R0JaWTR2ZFA1MnN4YmVqMzAiLCJoUmpMMWRQM0ZlZ09qNFp6eHZraWJ4dUZsNTRzTC1TTmVYTElqSXphLTFBIl19XQ",
+    "value": {
+      "resourceType": "Location",
+      "id": "loc1",
+      "_sd": [
+        "mMXe3V-JFCnMr7PuqpjT3eGRCwGBZY4vdP52sxbej30",
+        "hRjL1dP3FegOj4ZzxvkibxuFl54sL-SNeXLIjIza-1A"
+      ]
+    },
+    "salt": "DKv_TxDm2DnVxgbhmkuyAg"
+  },
+  {
+    "digest": "tSeNGrAS7c53neN9XYNCwKhRETbo2srmwUO5AgaNAM4",
+    "encoded": "WyJyaWhfckJ2WHI2b1JyN3M2eWNxMW9nIix7ImZ1bGxVcmwiOiJodHRwczovL3NkLmV4YW1wbGUub3JnL2ZoaXIvSW1tdW5pemF0aW9uL2kxIiwicmVzb3VyY2UiOnsicmVzb3VyY2VUeXBlIjoiSW1tdW5pemF0aW9uIiwiaWQiOiJpMSIsInN0YXR1cyI6ImNvbXBsZXRlZCIsImNvbnRhaW5lZCI6W3siLi4uIjoiVVBDbUFIdDhLQ3QtWWU0LTEzLWl2UjQxdGdsQlpJYkQ3TV9mT3pEcDV1WSJ9XSwiX3NkIjpbImdYZUxQdXR6MFE4WnFZT1pwTEllbnpEdHBDdGRwdmxnQlJLQmdtRHNTdE0iLCJPbXpmb2lfSV9EQUl0ODNKUDlTcVp1OFJyQXlhTG9NRUxtQkR6dUtqMnY0IiwiYU8tc0lGSFZrb09fTThPbVhscnFNMk15Um5UQmRjS2ZYYlZLLXRIei01WSIsInZnTmFvMTcta1pBVWROOTg0M0x4bFRiYWI5dzFRSkkzVXp2WVRiR3hQczgiXX19XQ",
+    "value": {
+      "fullUrl": "https://sd.example.org/fhir/Immunization/i1",
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "i1",
+        "status": "completed",
+        "contained": [
+          {
+            "...": "UPCmAHt8KCt-Ye4-13-ivR41tglBZIbD7M_fOzDp5uY"
+          }
+        ],
+        "_sd": [
+          "gXeLPutz0Q8ZqYOZpLIenzDtpCtdpvlgBRKBgmDsStM",
+          "Omzfoi_I_DAIt83JP9SqZu8RrAyaLoMELmBDzuKj2v4",
+          "aO-sIFHVkoO_M8OmXlrqM2MyRnTBdcKfXbVK-tHz-5Y",
+          "vgNao17-kZAUdN9843LxlTbab9w1QJI3UzvYTbGxPs8"
+        ]
+      }
+    },
+    "salt": "rih_rBvXr6oRr7s6ycq1og"
+  }
+]

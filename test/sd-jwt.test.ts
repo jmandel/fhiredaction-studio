@@ -42,22 +42,21 @@ describe("SD-JWT", () => {
 
         // Pack
         const packer = new SDPacker();
-        const packedPayload = await packer.pack(payload, disclosureConfig);
-        const disclosures = packer.getDisclosures();
+        const { packedPayload: packedPayloadArray, disclosures: disclosuresArray } = await packer.pack(payload, disclosureConfig);
 
         // Sign
-        const jwt = await new jose.SignJWT(packedPayload)
+        const jwt = await new jose.SignJWT(packedPayloadArray)
             .setProtectedHeader({ alg: 'ES256' })
             .sign(privKey);
 
-        const sdJwt = new SDJwt(jwt, disclosures);
+        const sdJwt = new SDJwt(jwt, disclosuresArray);
         const serialized = sdJwt.toString();
         
         console.log("Serialized SD-JWT:", serialized);
 
         // Parse
-        const parsedSdJwt = await SDJwt.parseAsync(serialized);
-        expect(parsedSdJwt.disclosures.length).toBe(disclosures.length);
+        const parsedSdJwt = await SDJwt.parse(serialized);
+        expect(parsedSdJwt.disclosures.length).toBe(disclosuresArray.length);
 
         // Verify
         const verifier = new Verifier();
@@ -81,19 +80,19 @@ describe("SD-JWT", () => {
         };
         
         const packer = new SDPacker();
-        const packedPayload = await packer.pack(payload, disclosureConfig);
+        const { packedPayload: packedPayloadArray2, disclosures: disclosuresArray2 } = await packer.pack(payload, disclosureConfig);
         
         // Expect packedPayload.nationalities[0] to be { "...": <digest> }
         // Access using bracket notation and check definition
-        expect(packedPayload.nationalities[0]['...']).toBeDefined();
-        expect(packedPayload.nationalities[1]).toBe("DE");
+        expect(packedPayloadArray2.nationalities[0]['...']).toBeDefined();
+        expect(packedPayloadArray2.nationalities[1]).toBe("DE");
         
          // Sign
-        const jwt = await new jose.SignJWT(packedPayload)
+        const jwt = await new jose.SignJWT(packedPayloadArray2)
             .setProtectedHeader({ alg: 'ES256' })
             .sign(privKey);
 
-        const sdJwt = new SDJwt(jwt, packer.getDisclosures());
+        const sdJwt = new SDJwt(jwt, disclosuresArray2);
         
         const verifier = new Verifier();
         const verifiedClaims = await verifier.verify(sdJwt, pubKey);
@@ -112,17 +111,13 @@ describe("SD-JWT", () => {
         };
         
         const packer = new SDPacker();
-        const packedPayload = await packer.pack(payload, disclosureConfig);
+        const { packedPayload, disclosures } = await packer.pack(payload, disclosureConfig);
         
          // Sign
         const jwt = await new jose.SignJWT(packedPayload)
             .setProtectedHeader({ alg: 'ES256' })
             .sign(privKey);
 
-        const disclosures = packer.getDisclosures();
-        // Drop one disclosure (e.g. "US")
-        // We need to know which one is which. The packer stores them in order of creation.
-        // US is first.
         const disclosuresToSend = disclosures.slice(1);
 
         const sdJwt = new SDJwt(jwt, disclosuresToSend);
@@ -143,7 +138,7 @@ describe("SD-JWT", () => {
             _decoys: 2
         };
         const packer = new SDPacker();
-        const packed = await packer.pack(payload, config);
+        const { packedPayload: packed } = await packer.pack(payload, config);
         
         expect(packed._sd).toBeDefined();
         expect(packed._sd.length).toBe(3); // 1 disclosure + 2 decoys
@@ -159,14 +154,14 @@ describe("SD-JWT", () => {
         
         // Pack (no disclosures for simplicity, just testing KB)
         const packer = new SDPacker();
-        const packedPayload = await packer.pack(payload, {});
+        const { packedPayload, disclosures } = await packer.pack(payload, {});
         
         // Issuer signs
         const jwt = await new jose.SignJWT(packedPayload)
             .setProtectedHeader({ alg: 'ES256' })
             .sign(privKey);
-            
-        const sdJwt = new SDJwt(jwt, []);
+
+        const sdJwt = new SDJwt(jwt, disclosures);
         
         // Calculate sd_hash
         const sdHash = await sdJwt.calculateSdHash();
@@ -191,7 +186,7 @@ describe("SD-JWT", () => {
         const payload = { a: 1 };
         const config = { a: true };
         const packer = new SDPacker();
-        const packed = await packer.pack(payload, config);
+        const { packedPayload: packed, disclosures } = await packer.pack(payload, config);
         
         const jwt = await new jose.SignJWT(packed)
             .setProtectedHeader({ alg: 'ES256' })
@@ -199,9 +194,9 @@ describe("SD-JWT", () => {
             
         // Add an extra disclosure that isn't used
         const extraDisclosure = await Disclosure.create("unused", "b");
-        const disclosures = [...packer.getDisclosures(), extraDisclosure];
+        const disclosuresWithExtra = [...disclosures, extraDisclosure];
         
-        const sdJwt = new SDJwt(jwt, disclosures);
+        const sdJwt = new SDJwt(jwt, disclosuresWithExtra);
         const verifier = new Verifier();
         
         expect(verifier.verify(sdJwt, pubKey)).rejects.toThrow("Unused disclosures found");
@@ -228,7 +223,7 @@ describe("SD-JWT", () => {
         };
 
         const packer = new SDPacker();
-        const packed = await packer.pack(payload, config);
+        const { packedPayload: packed, disclosures } = await packer.pack(payload, config);
 
         // Verify object structure and decoys
         expect(packed.nested._sd).toBeDefined();
@@ -253,7 +248,7 @@ describe("SD-JWT", () => {
             .setProtectedHeader({ alg: 'ES256' })
             .sign(privKey);
         
-        const sdJwt = new SDJwt(jwt, packer.getDisclosures());
+        const sdJwt = new SDJwt(jwt, disclosures);
         const verifier = new Verifier();
         const verified = await verifier.verify(sdJwt, pubKey);
 

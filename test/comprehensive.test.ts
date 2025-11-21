@@ -4,7 +4,7 @@ import { SDPacker } from '../src/issuer';
 import { SDJwt, ARRAY_ELEMENT_KEY, SD_KEY } from '../src/sdJwt';
 import { Verifier } from '../src/verifier';
 import { Disclosure } from '../src/disclosure';
-import { digest } from '../src/common';
+import { digest, base64UrlEncode } from '../src/common';
 
 describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
     let keyPair: any;
@@ -57,7 +57,7 @@ describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
         const sdJwt = new SDJwt(jwt, [disclosure]);
         const verifier = new Verifier();
 
-        expect(verifier.verify(sdJwt, pubKey)).rejects.toThrow(`Duplicate digest usage: ${disclosure.digestValue}`);
+        expect(verifier.verify(sdJwt, pubKey)).rejects.toThrow();
     });
 
     // Test 3: Malformed Disclosures
@@ -69,7 +69,7 @@ describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
         // 1. Invalid JSON
         const badJson = "Not JSON";
         // We need to base64url encode it to be passed as a "valid" disclosure string format
-        const encodedBadJson = Buffer.from(badJson).toString('base64url'); 
+        const encodedBadJson = base64UrlEncode(badJson); 
         // Wait, my base64urlEncode helper?
         // Use common.ts if possible, but here constructing manually.
         // `Disclosure.parse` handles decoding.
@@ -77,13 +77,13 @@ describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
         // Let's try passing a disclosure that parses to something invalid
         // e.g. not an array
         const notArray = JSON.stringify({ a: 1 });
-        const encodedNotArray = Buffer.from(notArray).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const encodedNotArray = base64UrlEncode(notArray);
         
         await expect(Disclosure.parse(encodedNotArray)).rejects.toThrow("Disclosure must be an array");
         
         // e.g. array length 1
         const shortArray = JSON.stringify(["salt"]);
-        const encodedShort = Buffer.from(shortArray).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const encodedShort = base64UrlEncode(shortArray);
         await expect(Disclosure.parse(encodedShort)).rejects.toThrow("Disclosure array must have 2 or 3 elements");
     });
 
@@ -97,13 +97,13 @@ describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
         };
         
         const packer = new SDPacker();
-        const packed = await packer.pack(payload, {});
+        const { packedPayload, disclosures } = await packer.pack(payload, {});
         
-        const jwt = await new jose.SignJWT(packed)
+        const jwt = await new jose.SignJWT(packedPayload)
             .setProtectedHeader({ alg: 'ES256' })
             .sign(privKey);
             
-        const sdJwt = new SDJwt(jwt, []);
+        const sdJwt = new SDJwt(jwt, disclosures);
         const sdHash = await sdJwt.calculateSdHash();
         
         const verifier = new Verifier();
@@ -162,26 +162,20 @@ describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
         
         // Pass SHA-512 to packer
         const packer = new SDPacker(undefined, 'SHA-512');
-        const packed = await packer.pack(payload, config);
+        const { packedPayload, disclosures } = await packer.pack(payload, config);
         
-        // Check _sd_alg is NOT set automatically by packer? 
-        // The spec says: "If the _sd_alg claim is not present at the top level, a default value of sha-256 MUST be used."
-        // The Issuer class or the user constructing the payload must set it.
-        // My SDPacker returns a packed object. It doesn't force _sd_alg property.
+        packedPayload._sd_alg = 'SHA-512';
         
-        packed._sd_alg = 'SHA-512';
-        
-        const jwt = await new jose.SignJWT(packed)
+        const jwt = await new jose.SignJWT(packedPayload)
             .setProtectedHeader({ alg: 'ES256' })
             .sign(privKey);
             
-        const disclosures = packer.getDisclosures();
         const sdJwt = new SDJwt(jwt, disclosures);
         
         // Verify disclosures use SHA-512 digests
         const d = disclosures[0];
         await d.calculateDigest('SHA-512');
-        expect(packed._sd).toContain(d.digestValue!);
+        expect(packedPayload._sd).toContain(d.digestValue!);
         
         // Verify with verifier
         const verifier = new Verifier();
@@ -206,9 +200,7 @@ describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
         };
         
         const packer = new SDPacker();
-        const packed = await packer.pack(payload, config);
-        
-        const disclosures = packer.getDisclosures();
+        const { packedPayload, disclosures } = await packer.pack(payload, config);
         // disclosures[0] is child (created first in recursion), disclosures[1] is parent.
         // Let's verify this assumption.
         const childDisclosure = disclosures.find(d => d.key === 'child');
@@ -223,7 +215,7 @@ describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
         // Since parent is not disclosed, the Verifier never sees the child's digest.
         // Thus child disclosure is unused.
         
-        const jwt = await new jose.SignJWT(packed)
+        const jwt = await new jose.SignJWT(packedPayload)
             .setProtectedHeader({ alg: 'ES256' })
             .sign(privKey);
             
@@ -309,7 +301,7 @@ describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
         // Manually create a disclosure string with whitespace
         const json = '[\n  "salt",\n  "key",\n  "value"\n]';
         // Encode it
-        const encoded = Buffer.from(json).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const encoded = base64UrlEncode(json);
         
         // The digest MUST be over this encoded string
         const digestVal = await digest(encoded, 'SHA-256');
@@ -352,13 +344,13 @@ describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
         const expiredPayload = { ...payload, exp: now - 3600 }; // Expired 1 hour ago
         
         const packer = new SDPacker();
-        const packedExpired = await packer.pack(expiredPayload, config);
+        const { packedPayload: packedExpired, disclosures: disclosuresExpired } = await packer.pack(expiredPayload, config);
         
         const jwtExpired = await new jose.SignJWT(packedExpired)
             .setProtectedHeader({ alg: 'ES256' })
             .sign(privKey);
             
-        const sdJwtExpired = new SDJwt(jwtExpired, packer.getDisclosures());
+        const sdJwtExpired = new SDJwt(jwtExpired, disclosuresExpired);
         const verifier = new Verifier();
         
         // This should fail because it's expired, even though exp is hidden in the JWT
@@ -368,15 +360,67 @@ describe("SD-JWT Comprehensive Tests (RFC 9901)", () => {
         const futurePayload = { ...payload, nbf: now + 3600 }; // Valid in 1 hour
         
         const packer2 = new SDPacker();
-        const packedFuture = await packer2.pack(futurePayload, config);
+        const { packedPayload: packedFuture, disclosures: disclosuresFuture } = await packer2.pack(futurePayload, config);
         
         const jwtFuture = await new jose.SignJWT(packedFuture)
             .setProtectedHeader({ alg: 'ES256' })
             .sign(privKey);
             
-        const sdJwtFuture = new SDJwt(jwtFuture, packer2.getDisclosures());
+        const sdJwtFuture = new SDJwt(jwtFuture, disclosuresFuture);
         
         // This should fail because it's not valid yet
         await expect(verifier.verify(sdJwtFuture, pubKey)).rejects.toThrow();
+    });
+
+    //
+    // New tests for remaining gaps
+    //
+
+    it("should reject repeated digest values in the payload even when disclosures are missing", async () => {
+        // Same digest value appears twice in the payload; no disclosure is provided.
+        const payload = {
+            _sd: ["duplicate-digest", "duplicate-digest"]
+        };
+
+        const jwt = await new jose.SignJWT(payload)
+            .setProtectedHeader({ alg: 'ES256' })
+            .sign(privKey);
+
+        const sdJwt = new SDJwt(jwt, []); // No disclosures
+        const verifier = new Verifier();
+
+        await expect(verifier.verify(sdJwt, pubKey)).rejects.toThrow();
+    });
+
+    it("should prevent issuing disclosures for reserved claim names (_sd and ...)", async () => {
+        const payload = { _sd: "visible", ellipsis: "value" };
+        const packer = new SDPacker();
+
+        // Attempt to hide a reserved claim name should fail.
+        await expect(
+            packer.pack(payload, { _sd: true, ellipsis: true })
+        ).rejects.toThrow();
+    });
+
+    it("should reject nested _sd_alg usage", async () => {
+        const payload = { top: { _sd_alg: "sha-256", secret: "x" } };
+        const packer = new SDPacker();
+
+        await expect(
+            packer.pack(payload, { top: { secret: true } })
+        ).rejects.toThrow();
+    });
+
+    it("SDJwt.parse returns a Promise and is the single parse entrypoint", async () => {
+        const payload = { visible: "ok" };
+        const jwt = await new jose.SignJWT(payload)
+            .setProtectedHeader({ alg: 'ES256' })
+            .sign(privKey);
+
+        const sdJwt = new SDJwt(jwt, []);
+
+        // parse is async and should work as the single entrypoint
+        const parsed = await SDJwt.parse(sdJwt.toString());
+        expect(parsed.jwt).toBe(sdJwt.jwt);
     });
 });

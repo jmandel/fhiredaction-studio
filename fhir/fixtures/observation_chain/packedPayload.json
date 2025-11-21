@@ -1,0 +1,19 @@
+{
+  "resourceType": "Observation",
+  "status": "final",
+  "code": {
+    "text": "Blood pressure note"
+  },
+  "category": [
+    {
+      "...": "Z0IMF39Hq2ba2Xu5_hVbKrQKKb8EORLArdpl7TsDSg8"
+    },
+    {
+      "...": "nfiACzLMl7ORFjdp5pjDS5jnA8YlbVBcX-vE2Eu2S3M"
+    }
+  ],
+  "_sd": [
+    "UGXqmPDJvwKU_P-0Tq7y_cLyH7mwrY1PCkikZm-YUEs"
+  ],
+  "_sd_alg": "sha-256"
+}

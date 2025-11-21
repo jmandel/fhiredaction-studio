@@ -1,0 +1,22 @@
+[
+  {
+    "encoded": "WyJrYlM4c2NLNGFvY18zUlA3ZHoyeV9nIiwidmFsdWVTdHJpbmciLCJQYXRpZW50IHJlcG9ydGVkIGZlZWxpbmcgZGl6enkgaW4gdGhlIG1vcm5pbmcuIl0",
+    "digest": "UGXqmPDJvwKU_P-0Tq7y_cLyH7mwrY1PCkikZm-YUEs",
+    "key": "valueString",
+    "value": "Patient reported feeling dizzy in the morning."
+  },
+  {
+    "encoded": "WyJKa3hvR3Q0TUItdGdNZnVHdG9zazZ3Iix7InRleHQiOiJ2aXRhbC1zaWducyJ9XQ",
+    "digest": "Z0IMF39Hq2ba2Xu5_hVbKrQKKb8EORLArdpl7TsDSg8",
+    "value": {
+      "text": "vital-signs"
+    }
+  },
+  {
+    "encoded": "WyJfNjlmcHdKMGRIaDFDdTJTcE9Fa1JBIix7InRleHQiOiJob21lIn1d",
+    "digest": "nfiACzLMl7ORFjdp5pjDS5jnA8YlbVBcX-vE2Eu2S3M",
+    "value": {
+      "text": "home"
+    }
+  }
+]

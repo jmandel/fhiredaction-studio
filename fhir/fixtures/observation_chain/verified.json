@@ -1,0 +1,16 @@
+{
+  "resourceType": "Observation",
+  "status": "final",
+  "code": {
+    "text": "Blood pressure note"
+  },
+  "category": [
+    {
+      "text": "vital-signs"
+    },
+    {
+      "text": "home"
+    }
+  ],
+  "valueString": "Patient reported feeling dizzy in the morning."
+}
